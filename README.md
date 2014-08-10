@@ -8,12 +8,11 @@ Common Scenario
 
 UTM links tracking is very common task if you want to promote your online business. This middleware helps you to do that.
 
-1. You associate an affiliate tag (for eg. <code>ABC123</code>) with your partner.
-2. The affiliate promotes your business at http://partner.org by linking to your site with like <code>http://yoursite.org?ref=ABC123</code>.
-3. A user clicks through the link and lands on your site.
-4. Rack::Affiliates middleware finds <code>ref</code> parameter in the request, extracts affiliate tag and saves it in a cookie
-5. User signs up (now or later) and you mark it as a referral from your partner
-6. PROFIT!
+1. Use UTM Link to promote your business like <code>http://yoursite.org?utm_source=ABC123....</code>.
+2. A user clicks through the link and lands on your site.
+3. Rack::Utm middleware finds <code>utm_*</code> parameters in the request, extracts them and saves it in a cookie
+4. User signs up (now or later) and you know the utm params the user has assigned
+5. PROFIT!
 
 Installation
 ------------
@@ -46,8 +45,8 @@ Now you can check any request to see who came to your site via an affiliated lin
 
     class ExampleController < ApplicationController
       def index
-        str = if request.env['affiliate.tag'] && affiliate = User.find_by_affiliate_tag(request.env['affiliate.tag'])
-          "Halo, referral! You've been referred here by #{affiliate.name} from #{request.env['affiliate.from']} @ #{Time.at(env['affiliate.time'])}"
+        str = if request.env['utm.source']
+          "Hallo, user! You've been referred here by #{request.env['utm.source']}, #{request.env['utm.medium']}, ...."
         else
           "We're glad you found us on your own!"
         end
@@ -60,13 +59,12 @@ Now you can check any request to see who came to your site via an affiliated lin
 Customization
 -------------
 
-You can customize parameter name by providing <code>:param</code> option (default is <code>ref</code>).
-By default cookie is set for 30 days, you can extend time to live with <code>:ttl</code> option (default is 30 days). 
+By default cookie is set for 30 days, you can extend time to live with <code>:ttl</code> option (default is 30 days).
 
     #Rails 3 in config/application.rb
     class Application < Rails::Application
       ...
-      config.middleware.use Rack::Affiliates, {:param => 'aff_id', :ttl => 3.months}
+      config.middleware.use Rack::Affiliates, {:ttl => 3.months}
       ...
     end
 
@@ -81,10 +79,10 @@ The <code>:domain</code> option allows to customize cookie domain.
 
 Middleware will set cookie on <code>.example.org</code> so it's accessible on <code>www.example.org</code>, <code>app.example.org</code> etc.
 
-The <code>:overwrite</code> option allows to set whether to overwrite the existing affiliate tag previously stored in cookies. By default it is set to `true`.
+The <code>:overwrite</code> option allows to set whether to overwrite the existing utm tag previously stored in cookies. By default it is set to `true`.
 
 Credits
 =======
 
-Thanks goes to Rack::Referrals (https://github.com/deviantech/rack-referrals) for the inspiration.
+Thanks goes to Rack::Referrals (https://github.com/deviantech/rack-referrals) and Rack::Affiliates (https://github.com/alexlevin/rack-affiliates) for the inspiration.
 
