@@ -6,13 +6,14 @@
 
 Gem::Specification.new do |s|
   s.name = "rack-utm"
-  s.version = "0.0.1"
+  s.version = File.read(File.expand_path('../VERSION', __FILE__)).chop
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Severin Ulrich"]
   s.date = "2014-08-10"
   s.description = "If the user clicked through from an affiliated site, this middleware will track affiliate tag, referring url and time."
   s.email = "novolab@novotec.ch"
+  s.files = ['lib/rack-utm.rb']
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.md"
