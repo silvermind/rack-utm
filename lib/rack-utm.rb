@@ -30,14 +30,16 @@ module Rack
       params_tag = req.params[@key_param]
       cookie_tag = req.cookies[COOKIE_SOURCE]
 
-      params_from_tag = req.params['HTTP_REFERER']
+      params_from_tag = req.env["HTTP_REFERER"]
       cookie_from_tag = req.cookies[COOKIE_FROM]
 
       if cookie_tag || cookie_from_tag
         source, medium, term, content, campaign, from, time, lp = cookie_info(req)
       end
 
-      if params_tag || params_from_tag
+      if (params_tag && params_tag != cookie_tag) ||
+        (params_from_tag &&  params_from_tag != cookie_from_tag)
+
         if source || from
           if @allow_overwrite
             source, medium, term, content, campaign, from, time, lp = params_info(req)
@@ -47,7 +49,7 @@ module Rack
         end
       end
 
-      if source
+      if source || from
         env["utm.source"] = source
         env['utm.medium'] = medium
         env['utm.term'] = term
